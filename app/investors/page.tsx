@@ -1,40 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { InvestorCard } from '@/components/investor-card';
 import { Investor } from '@/lib/types';
-import { Search, Filter, ShieldCheck, RefreshCw, AlertTriangle, Lock } from 'lucide-react';
-import Link from 'next/link';
+import { Search, Filter, ShieldCheck, RefreshCw, AlertTriangle } from 'lucide-react';
 
 export default function InvestorsPage() {
   const [investors, setInvestors] = useState<Investor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isLoggedOut, setIsLoggedOut] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
   const [isVerifiedOnly, setIsVerifiedOnly] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-  const fetchInvestors = async () => {
+  const fetchInvestors = useCallback(async () => {
     setLoading(true);
     setError(null);
-    setIsLoggedOut(false);
     try {
-      const token = localStorage.getItem('access_token');
-      
-      if (!token) {
-        setIsLoggedOut(true);
-        setLoading(false);
-        return;
-      }
-
-      const res = await fetch(`${API_URL}/api/investor-registrations/`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      // Fetch without authentication, as per user requirement (matching franchisor style)
+      const res = await fetch(`${API_URL}/api/investor-registrations/`);
       
       if (res.ok) {
         const data = await res.json();
@@ -49,12 +35,12 @@ export default function InvestorsPage() {
           experience: item.business_experience || 'Industry Professional',
           description: item.about || '',
           image: item.logo || '',
-          verified: item.status === 'converted',
+          verified: item.status === 'converted' || item.status === 'paid',
           firmName: item.firm_name,
+          email: item.email,
+          phone_number: item.phone_number
         }));
         setInvestors(mapped);
-      } else if (res.status === 401 || res.status === 403) {
-        setIsLoggedOut(true);
       } else {
         const errText = await res.text();
         console.error('API Error:', errText);
@@ -66,45 +52,11 @@ export default function InvestorsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_URL]);
 
   useEffect(() => {
     fetchInvestors();
-  }, [API_URL]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50/50">
-        <RefreshCw className="animate-spin text-blue-600 mb-6" size={48} />
-        <p className="text-gray-400 font-black uppercase tracking-[0.4em] text-xs">Unlocking Secure Data...</p>
-      </div>
-    );
-  }
-
-  if (isLoggedOut) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50/50 p-6">
-        <div className="bg-white rounded-[3rem] border border-gray-100 p-12 md:p-24 text-center shadow-2xl max-w-2xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
-          <div className="w-24 h-24 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-10 shadow-inner">
-             <Lock size={44} />
-          </div>
-          <h2 className="text-4xl font-black text-gray-900 mb-4 tracking-tighter">Private Network Restricted</h2>
-          <p className="text-gray-500 font-medium mb-12 text-lg leading-relaxed">
-            Investor profiles are private to protect member privacy. Please sign in to your Franchisor or Admin account to view the capital network.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-             <Link href="/login" className="px-12 py-5 bg-blue-700 text-white font-black rounded-2xl uppercase tracking-widest text-xs hover:bg-black transition-all shadow-xl shadow-blue-500/20">
-                Sign In Now
-             </Link>
-             <Link href="/register" className="px-12 py-5 bg-white border-2 border-gray-100 text-gray-900 font-black rounded-2xl uppercase tracking-widest text-xs hover:bg-gray-50 transition-all">
-                Create Account
-             </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  }, [fetchInvestors]);
 
   const allIndustries = Array.from(new Set(investors.flatMap((i) => i.preferredIndustries)));
 
@@ -117,7 +69,8 @@ export default function InvestorsPage() {
   const filtered = investors.filter((investor) => {
     const matchesSearch =
       investor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      investor.description.toLowerCase().includes(searchQuery.toLowerCase());
+      (investor.description && investor.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (investor.firmName && investor.firmName.toLowerCase().includes(searchQuery.toLowerCase()));
 
     const matchesIndustry =
       selectedIndustries.length === 0 || 
@@ -127,6 +80,15 @@ export default function InvestorsPage() {
 
     return matchesSearch && matchesIndustry && matchesVerified;
   });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50/50">
+        <RefreshCw className="animate-spin text-blue-600 mb-6" size={48} />
+        <p className="text-gray-400 font-black uppercase tracking-[0.4em] text-xs">Accessing Private Equity Data...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50/50">
@@ -141,8 +103,8 @@ export default function InvestorsPage() {
           <div className="flex items-center gap-4 bg-white p-6 rounded-3xl border border-gray-100 shadow-xl">
              <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl"><ShieldCheck size={28}/></div>
              <div>
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Privacy Protected</p>
-                <p className="text-sm font-black text-gray-900 uppercase">INTERNAL NETWORK</p>
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Global Network</p>
+                <p className="text-sm font-black text-gray-900 uppercase">ACTIVE INVESTORS</p>
              </div>
           </div>
         </div>
@@ -212,7 +174,7 @@ export default function InvestorsPage() {
             <div className="lg:col-span-3">
               <div className="mb-10 flex items-center justify-between">
                  <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">
-                   Displaying <span className="text-gray-900">{filtered.length} Real-Time Profiles</span>
+                   Displaying <span className="text-gray-900">{filtered.length} Active Investors</span>
                  </p>
               </div>
 

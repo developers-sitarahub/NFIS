@@ -17,6 +17,8 @@ export interface Franchise {
   website?: string;
   highlights: string[];
   verified?: boolean;
+  email_address?: string;
+  contact_number?: string;
 }
 
 export interface Exhibition {
@@ -51,4 +53,6 @@ export interface Investor {
   image: string;
   verified: boolean;
   firmName?: string;
+  email?: string;
+  phone_number?: string;
 }

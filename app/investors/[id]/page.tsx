@@ -145,17 +145,38 @@ export default async function InvestorDetailPage({ params }: InvestorDetailPageP
                 </div>
              </div>
 
-              <div className="rounded-3xl border border-gray-100 bg-white p-10 shadow-xl">
-                <h3 className="text-xl font-black text-gray-900 tracking-tight mb-8 flex items-center gap-3">
-                  <div className="w-1.5 h-6 bg-blue-600 rounded-full"></div>
-                  Executive Summary
-                </h3>
-                <div className="prose prose-blue max-w-none">
-                   <div className="text-gray-700 leading-relaxed font-medium whitespace-pre-wrap">
-                      {investor.about || "This principal investor is currently exploring premium franchise opportunities in their preferred sectors. Please request an introduction for more details on their strategic investment philosophy and deployment timeline."}
+               <div className="rounded-3xl border border-gray-100 bg-white p-10 shadow-xl">
+                 <h3 className="text-xl font-black text-gray-900 tracking-tight mb-8 flex items-center gap-3">
+                   <div className="w-1.5 h-6 bg-blue-600 rounded-full"></div>
+                   Executive Summary
+                 </h3>
+                 <div className="prose prose-blue max-w-none mb-10">
+                    <div className="text-gray-700 leading-relaxed font-medium whitespace-pre-wrap">
+                       {investor.about || "This principal investor is currently exploring premium franchise opportunities in their preferred sectors. Please request an introduction for more details on their strategic investment philosophy and deployment timeline."}
+                    </div>
+                 </div>
+
+                 {/* Contact Information */}
+                 {(item.email || item.phone_number) && (
+                   <div className="pt-10 border-t border-gray-50">
+                      <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Verified Contact Details</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         {item.email && (
+                           <div className="flex flex-col">
+                              <span className="text-[10px] font-black text-blue-600 uppercase mb-1">Direct Email</span>
+                              <span className="text-sm font-bold text-gray-900">{item.email}</span>
+                           </div>
+                         )}
+                         {item.phone_number && (
+                           <div className="flex flex-col">
+                              <span className="text-[10px] font-black text-blue-600 uppercase mb-1">Phone Number</span>
+                              <span className="text-sm font-bold text-gray-900">{item.phone_number}</span>
+                           </div>
+                         )}
+                      </div>
                    </div>
-                </div>
-              </div>
+                 )}
+               </div>
           </div>
 
           {/* Sidebar */}
