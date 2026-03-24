@@ -153,7 +153,7 @@ export default function Home() {
               ))
             ) : (
               <div className="col-span-3 text-center py-20">
-                <p className="text-gray-500">No active exhibitors found at this time.</p>
+                <p className="text-gray-500">No active franchisors are on this platform yet. Stay tuned on the platform for more updates.</p>
               </div>
             )}
           </div>

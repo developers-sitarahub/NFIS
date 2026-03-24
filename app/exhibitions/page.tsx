@@ -1,7 +1,6 @@
 'use client';
 
 import { ExhibitionCard } from '@/components/exhibition-card';
-import { mockExhibitions } from '@/lib/mock-data';
 
 import { Search, Calendar } from 'lucide-react';
 import { useState, useEffect } from 'react';
