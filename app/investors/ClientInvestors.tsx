@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { InvestorCard } from '@/components/investor-card';
 import { Investor } from '@/lib/types';
 import { Search, Filter, ShieldCheck, RefreshCw, AlertTriangle } from 'lucide-react';
-import { FullPageLoader } from '@/components/full-page-loader';
 
 export default function InvestorsPage() {
   const [investors, setInvestors] = useState<Investor[]>([]);
@@ -22,11 +21,11 @@ export default function InvestorsPage() {
     try {
       // Fetch without authentication, as per user requirement (matching franchisor style)
       const res = await fetch(`${API_URL}/api/investor-registrations/`);
-      
+
       if (res.ok) {
         const data = await res.json();
         const results = data.results || (Array.isArray(data) ? data : []);
-        
+
         const mapped: Investor[] = results.map((item: any) => ({
           id: item.id?.toString() || Math.random().toString(),
           name: item.full_name || item.firm_name || 'Strategic Investor',
@@ -74,17 +73,13 @@ export default function InvestorsPage() {
       (investor.firmName && investor.firmName.toLowerCase().includes(searchQuery.toLowerCase()));
 
     const matchesIndustry =
-      selectedIndustries.length === 0 || 
+      selectedIndustries.length === 0 ||
       investor.preferredIndustries.some(ind => selectedIndustries.includes(ind));
 
     const matchesVerified = !isVerifiedOnly || investor.verified;
 
     return matchesSearch && matchesIndustry && matchesVerified;
   });
-
-  if (loading) {
-    return <FullPageLoader label="Accessing Capital Network..." />;
-  }
 
   return (
     <div className="min-h-screen bg-gray-50/50">
@@ -97,18 +92,18 @@ export default function InvestorsPage() {
             </p>
           </div>
           <div className="flex items-center gap-4 bg-white p-6 rounded-3xl border border-gray-100 shadow-xl">
-             <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl"><ShieldCheck size={28}/></div>
-             <div>
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Global Network</p>
-                <p className="text-sm font-black text-gray-900 uppercase">ACTIVE INVESTORS</p>
-             </div>
+            <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl"><ShieldCheck size={28} /></div>
+            <div>
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Global Network</p>
+              <p className="text-sm font-black text-gray-900 uppercase">ACTIVE INVESTORS</p>
+            </div>
           </div>
         </div>
 
         {error ? (
           <div className="bg-white rounded-[3rem] border border-red-100 p-20 text-center shadow-2xl">
             <div className="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
-               <AlertTriangle size={40} />
+              <AlertTriangle size={40} />
             </div>
             <h3 className="text-3xl font-black text-gray-900 mb-3 uppercase tracking-tight">Sync Error</h3>
             <p className="text-gray-500 font-medium mb-10 max-w-sm mx-auto">{error}</p>
@@ -119,7 +114,7 @@ export default function InvestorsPage() {
             <div className="lg:col-span-1 space-y-8">
               <div className="bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-2xl sticky top-24">
                 <h3 className="text-xl font-bold mb-8 text-gray-900 flex items-center gap-2">
-                   <Filter size={18} className="text-blue-500" /> Filter Criteria
+                  <Filter size={18} className="text-blue-500" /> Filter Criteria
                 </h3>
 
                 <div className="space-y-8">
@@ -143,7 +138,7 @@ export default function InvestorsPage() {
                         {allIndustries.map((ind) => (
                           <div key={ind} className="flex items-center gap-3 group cursor-pointer" onClick={() => toggleIndustry(ind)}>
                             <div className={`w-5 h-5 rounded-md border-2 transition-all flex items-center justify-center ${selectedIndustries.includes(ind) ? "bg-blue-600 border-blue-600" : "bg-white border-gray-200 group-hover:border-blue-400"}`}>
-                               {selectedIndustries.includes(ind) && <div className="w-1.5 h-1.5 rounded-full bg-white"></div>}
+                              {selectedIndustries.includes(ind) && <div className="w-1.5 h-1.5 rounded-full bg-white"></div>}
                             </div>
                             <label className={`text-sm font-bold tracking-tight transition-colors ${selectedIndustries.includes(ind) ? "text-blue-700" : "text-gray-600 group-hover:text-blue-600"}`}>
                               {ind}
@@ -169,9 +164,9 @@ export default function InvestorsPage() {
 
             <div className="lg:col-span-3">
               <div className="mb-10 flex items-center justify-between">
-                 <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">
-                   Displaying <span className="text-gray-900">{filtered.length} Active Investors</span>
-                 </p>
+                <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">
+                  Displaying <span className="text-gray-900">{filtered.length} Active Investors</span>
+                </p>
               </div>
 
               {filtered.length > 0 ? (

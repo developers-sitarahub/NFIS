@@ -5,7 +5,6 @@ import { RefreshCw, Save, Upload, Camera, X, AlertCircle } from 'lucide-react';
 import Cropper, { Area } from 'react-easy-crop';
 import { toast } from 'sonner';
 import { authFetch, authFetchForm } from '@/lib/authFetch';
-import { FullPageLoader } from '@/components/full-page-loader';
 
 const getCroppedImg = async (imageSrc: string, pixelCrop: Area): Promise<Blob> => {
   const image = new Image();
@@ -93,7 +92,7 @@ export default function FranchisorDashboard() {
         if ((res.status === 401 || res.status === 403) && userEmail) {
           res = await fetch(`${API_URL}/api/exhibitor-registrations/?email=${userEmail}`);
         }
-        
+
         if (!res.ok) {
           toast.error(`Could not retrieve brand data (${res.status})`);
           setNoProfile(true);
@@ -175,7 +174,7 @@ export default function FranchisorDashboard() {
     try {
       const token = localStorage.getItem('access_token');
       const payload = new FormData();
-      
+
       // ONLY send manageable fields
       MANAGEABLE_FIELDS.forEach(field => {
         if (field === 'logo') return; // Handled separately
@@ -188,12 +187,12 @@ export default function FranchisorDashboard() {
       if (profile._logo_file) {
         payload.append('logo', profile._logo_file);
       }
-      
+
       const res = await authFetchForm(`${API_URL}/api/exhibitor-registrations/${profileId}/`, {
         method: 'PATCH',
         body: payload
       });
-      
+
       if (res.ok) {
         const updated = await res.json();
         setProfile(prev => ({ ...prev, ...updated }));
@@ -212,9 +211,6 @@ export default function FranchisorDashboard() {
     }
   };
 
-  if (loading) {
-    return <FullPageLoader label="Synchronizing Brand Data..." />;
-  }
 
   if (noProfile) {
     return (
@@ -305,40 +301,40 @@ export default function FranchisorDashboard() {
                     ) : key === 'investment_required' ? (
                       <div className="flex items-center gap-1 sm:gap-2 w-full px-4 py-3 bg-gray-50/50 border-2 border-transparent rounded-2xl focus-within:bg-white focus-within:ring-4 focus-within:ring-red-500/10 focus-within:border-red-500 transition-all duration-300">
                         <span className="text-gray-500 font-bold">₹</span>
-                        <input type="number" placeholder="10" className="w-12 sm:w-16 bg-transparent outline-none text-gray-900 font-semibold no-spinners" 
+                        <input type="number" placeholder="10" className="w-12 sm:w-16 bg-transparent outline-none text-gray-900 font-semibold no-spinners"
                           onChange={(e) => {
                             const currentParts = (value || '₹0 Lakh - ₹0 Lakh').split(' - ');
                             const minUnit = currentParts[0]?.match(/(K|Lakh|Crore)/i)?.[0] || 'Lakh';
                             handleChange(key, `₹${e.target.value} ${minUnit} - ${currentParts[1] || '₹0 Lakh'}`);
-                          }} 
-                          value={(value || '').split(' - ')[0]?.match(/₹?([\d.]+)/)?.[1] || ''} 
+                          }}
+                          value={(value || '').split(' - ')[0]?.match(/₹?([\d.]+)/)?.[1] || ''}
                         />
-                        <select className="bg-transparent outline-none text-gray-600 font-semibold appearance-none cursor-pointer" 
+                        <select className="bg-transparent outline-none text-gray-600 font-semibold appearance-none cursor-pointer"
                           onChange={(e) => {
                             const currentParts = (value || '₹0 Lakh - ₹0 Lakh').split(' - ');
                             const minNum = currentParts[0]?.match(/₹?([\d.]+)/)?.[1] || '0';
                             handleChange(key, `₹${minNum} ${e.target.value} - ${currentParts[1] || '₹0 Lakh'}`);
-                          }} 
+                          }}
                           value={(value || '').split(' - ')[0]?.match(/(K|Lakh|Crore)/i)?.[0] || 'Lakh'}
                         >
                           <option value="K">K</option><option value="Lakh">Lakh</option><option value="Crore">Crore</option>
                         </select>
                         <span className="text-gray-400 font-black">-</span>
                         <span className="text-gray-500 font-bold">₹</span>
-                        <input type="number" placeholder="50" className="w-12 sm:w-16 bg-transparent outline-none text-gray-900 font-semibold no-spinners" 
+                        <input type="number" placeholder="50" className="w-12 sm:w-16 bg-transparent outline-none text-gray-900 font-semibold no-spinners"
                           onChange={(e) => {
                             const currentParts = (value || '₹0 Lakh - ₹0 Lakh').split(' - ');
                             const maxUnit = currentParts[1]?.match(/(K|Lakh|Crore)/i)?.[0] || 'Lakh';
                             handleChange(key, `${currentParts[0] || '₹0 Lakh'} - ₹${e.target.value} ${maxUnit}`);
-                          }} 
-                          value={(value || '').split(' - ')[1]?.match(/₹?([\d.]+)/)?.[1] || ''} 
+                          }}
+                          value={(value || '').split(' - ')[1]?.match(/₹?([\d.]+)/)?.[1] || ''}
                         />
                         <select className="bg-transparent outline-none text-gray-600 font-semibold appearance-none cursor-pointer"
                           onChange={(e) => {
                             const currentParts = (value || '₹0 Lakh - ₹0 Lakh').split(' - ');
                             const maxNum = currentParts[1]?.match(/₹?([\d.]+)/)?.[1] || '0';
                             handleChange(key, `${currentParts[0] || '₹0 Lakh'} - ₹${maxNum} ${e.target.value}`);
-                          }} 
+                          }}
                           value={(value || '').split(' - ')[1]?.match(/(K|Lakh|Crore)/i)?.[0] || 'Lakh'}
                         >
                           <option value="K">K</option><option value="Lakh">Lakh</option><option value="Crore">Crore</option>
