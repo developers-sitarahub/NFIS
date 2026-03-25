@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { InvestorCard } from '@/components/investor-card';
 import { Investor } from '@/lib/types';
 import { Search, Filter, ShieldCheck, RefreshCw, AlertTriangle } from 'lucide-react';
+import { FullPageLoader } from '@/components/full-page-loader';
 
 export default function InvestorsPage() {
   const [investors, setInvestors] = useState<Investor[]>([]);
@@ -82,12 +83,7 @@ export default function InvestorsPage() {
   });
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50/50">
-        <RefreshCw className="animate-spin text-blue-600 mb-6" size={48} />
-        <p className="text-gray-400 font-black uppercase tracking-[0.4em] text-xs">Accessing Private Equity Data...</p>
-      </div>
-    );
+    return <FullPageLoader label="Accessing Capital Network..." />;
   }
 
   return (

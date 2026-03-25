@@ -5,6 +5,7 @@ import { RefreshCw, Save, Upload, Camera, X, AlertCircle } from 'lucide-react';
 import Cropper, { Area } from 'react-easy-crop';
 import { toast } from 'sonner';
 import { authFetch, authFetchForm } from '@/lib/authFetch';
+import { FullPageLoader } from '@/components/full-page-loader';
 
 const getCroppedImg = async (imageSrc: string, pixelCrop: Area): Promise<Blob> => {
   const image = new Image();
@@ -212,12 +213,7 @@ export default function FranchisorDashboard() {
   };
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px]">
-        <RefreshCw className="animate-spin text-red-500 mb-4" size={32} />
-        <p className="text-gray-500 font-medium italic">Synchronizing Brand Data...</p>
-      </div>
-    );
+    return <FullPageLoader label="Synchronizing Brand Data..." />;
   }
 
   if (noProfile) {

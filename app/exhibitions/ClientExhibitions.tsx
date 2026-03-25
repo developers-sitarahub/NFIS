@@ -125,34 +125,11 @@ export default function ExhibitionsPage() {
             {/* Results Count */}
             <div className="mb-8 flex items-center justify-between">
               <p className="text-gray-600 font-medium">
-                {loading ? (
-                  <span className="flex items-center gap-2">
-                    <span className="w-4 h-4 rounded-full border-2 border-red-600 border-t-transparent animate-spin"></span>
-                    Fetching latest events...
-                  </span>
-                ) : (
-                  <>
-                    Showing <span className="text-red-600 font-bold">{filtered.length}</span> exhibitions
-                  </>
-                )}
+                Showing <span className="text-red-600 font-bold">{filtered.length}</span> exhibitions
               </p>
             </div>
 
-            {/* Grid */}
-            {loading ? (
-              <div className="grid md:grid-cols-2 gap-8">
-                {[1, 2, 3, 4].map((n) => (
-                  <div key={n} className="bg-white rounded-2xl border border-gray-100 h-[400px] animate-pulse">
-                    <div className="h-48 bg-gray-100 rounded-t-2xl"></div>
-                    <div className="p-6 space-y-4">
-                      <div className="h-6 bg-gray-100 rounded w-3/4"></div>
-                      <div className="h-4 bg-gray-100 rounded w-1/2"></div>
-                      <div className="h-16 bg-gray-100 rounded"></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : filtered.length > 0 ? (
+            {filtered.length > 0 ? (
               <div className="grid md:grid-cols-2 gap-8">
                 {filtered.map((exhibition) => (
                   <ExhibitionCard key={exhibition.id} exhibition={exhibition} />

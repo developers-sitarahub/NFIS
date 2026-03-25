@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
 
@@ -50,7 +51,31 @@ export default function LoginPage() {
           if (data.refresh) localStorage.setItem('refresh_token', data.refresh);
           if (email) localStorage.setItem('user_email', email);
 
-          const role = data.user?.role;
+          const role = data.user?.role || data.role;
+          if (role) localStorage.setItem('user_role', role);
+
+          // More robust name detection
+          const firstName = data.user?.first_name || data.first_name;
+          const lastName = data.user?.last_name || data.last_name;
+          const username = data.user?.username || data.username;
+          
+          let displayName = 'User';
+          if (firstName) {
+            displayName = `${firstName} ${lastName || ''}`.trim();
+          } else if (username) {
+            displayName = username;
+          } else if (email) {
+            displayName = email.split('@')[0];
+          }
+          
+          localStorage.setItem('user_name', displayName);
+
+          if (data.user?.company_name || data.company_name) {
+            localStorage.setItem('company_name', data.user?.company_name || data.company_name);
+          }
+
+          // Broadcast authentication change to other components
+          window.dispatchEvent(new Event('auth-change'));
 
           if (role === 'franchisor') {
             router.push('/dashboard/franchisor');
@@ -120,6 +145,26 @@ export default function LoginPage() {
 
 
         <div className="w-full max-w-md relative z-10">
+          <div className="mb-10 block">
+            <Link href="/" className="group inline-flex items-center gap-4 transition-all">
+              <div className="relative w-14 h-14 bg-white rounded-full p-2 shadow-lg border border-gray-100 flex items-center justify-center transition-transform group-hover:scale-110 group-hover:shadow-red-500/10">
+                <div className="relative w-full h-full">
+                  <Image
+                    src="/logo.png"
+                    alt="NFIS Logo"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+              </div>
+              <div>
+                <p className="font-black text-xl text-gray-900 leading-none">NFIS</p>
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">India Summit</p>
+              </div>
+            </Link>
+          </div>
+
           <div className="mb-10 lg:mb-12">
             <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">
               Welcome Back

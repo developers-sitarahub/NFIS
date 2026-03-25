@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Mail, Lock, User, Building2, DollarSign, Phone, MapPin, Check, Search, ChevronDown, X } from 'lucide-react';
 
 export const PRODUCT_CATEGORIES_BY_INDUSTRY: Record<string, string[]> = {
@@ -25,6 +26,19 @@ export default function RegisterPage() {
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
+            <Link href="/" className="inline-block transition-transform hover:scale-110 mb-8">
+              <div className="relative w-24 h-24 bg-white rounded-full p-4 shadow-xl border border-blue-100/50 flex items-center justify-center">
+                <div className="relative w-full h-full">
+                  <Image
+                    src="/logo.png"
+                    alt="NFIS Logo"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+              </div>
+            </Link>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-balance">
               Join the National Franchise Investment Summit
             </h1>

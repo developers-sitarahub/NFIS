@@ -43,10 +43,17 @@ export function FranchiseCard({ franchise }: FranchiseCardProps) {
               <ShieldCheck size={16} />
             </div>
           )}
-          <div className="absolute top-3 right-3">
-            <span className="inline-block bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
-              {franchise.category}
-            </span>
+          <div className="absolute top-3 right-3 flex flex-wrap gap-1 justify-end max-w-[70%]">
+            {franchise.categories.slice(0, 2).map((cat, idx) => (
+              <span key={idx} className="inline-block bg-red-600 text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg shadow-lg">
+                {cat}
+              </span>
+            ))}
+            {franchise.categories.length > 2 && (
+              <span className="bg-white/90 backdrop-blur-sm text-gray-900 text-[10px] font-black px-2 py-1 rounded-lg">
+                +{franchise.categories.length - 2}
+              </span>
+            )}
           </div>
         </div>
 

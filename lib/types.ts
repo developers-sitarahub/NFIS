@@ -1,7 +1,7 @@
 export interface Franchise {
   id: string;
   name: string;
-  category: string;
+  categories: string[];
   investmentRange: {
     min: number;
     max: number;

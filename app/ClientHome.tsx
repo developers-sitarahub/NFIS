@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
+import Image from 'next/image';
 import { FranchiseCard } from '@/components/franchise-card';
 import { ExhibitionCard } from '@/components/exhibition-card';
 import { HomepageSearchBar } from '@/components/homepage-search-bar';
@@ -47,7 +48,7 @@ export default function Home() {
             return {
               id: item.id.toString(),
               name: item.company_name || 'Upcoming Franchise',
-              category: item.industry || 'General',
+              categories: (item.industry || 'General').split(/[;,]/).map((s: string) => s.trim()).filter(Boolean),
               investmentRange: {
                 min: minInvest,
                 max: maxInvest
@@ -118,7 +119,29 @@ export default function Home() {
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-12">
-            <p className="text-sm md:text-base font-semibold text-red-200 mb-3 uppercase tracking-wide">India's Premier Franchise Ecosystem</p>
+            <div className="relative w-32 h-32 mx-auto mb-10 group select-none transition-all duration-700">
+              {/* Refined Glowing Orbs in Background */}
+              <div className="absolute -inset-8 bg-white/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+              <div className="absolute -inset-4 bg-gradient-to-tr from-red-500/20 to-blue-500/20 rounded-full blur-2xl animate-pulse group-hover:scale-150 transition-all duration-1000"></div>
+              
+              {/* White Circular Hero Logo Backdrop */}
+              <div className="relative w-full h-full bg-white rounded-full p-2 shadow-2xl flex items-center justify-center border-4 border-white/20 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-110 group-hover:shadow-[0_0_80px_rgba(255,255,255,0.3)]">
+                <div className="relative w-full h-full transform transition-transform duration-1000 group-hover:scale-110">
+                  <Image
+                    src="/logo.png"
+                    alt="NFIS Logo"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+              </div>
+              
+              {/* Elegant Accent Rings */}
+              <div className="absolute -inset-2 border border-white/10 rounded-full transition-all duration-1000 group-hover:scale-125 group-hover:opacity-0"></div>
+              <div className="absolute -inset-4 border border-white/5 rounded-full transition-all duration-1000 group-hover:scale-150 group-hover:opacity-0 delay-75"></div>
+            </div>
+            <p className="text-sm md:text-base font-semibold text-red-200 mb-3 uppercase tracking-[0.3em]">India's Premier Franchise Ecosystem</p>
             <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight text-balance">
               National Franchise Investment Summit
             </h1>
