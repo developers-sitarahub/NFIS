@@ -1,58 +1,71 @@
-'use client';
-
-import { useEffect, useState, use } from 'react';
-import axios from 'axios';
+import { Metadata } from 'next';
 import Image from 'next/image';
 import { Calendar, MapPin, Users, Store, Globe, Clock, ChevronRight, Zap, Target } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-export default function ExhibitionDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-  const unwrappedParams = use(params);
-  const id = unwrappedParams.id;
-  
-  const [event, setEvent] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+interface Props {
+  params: Promise<{ id: string }>;
+}
 
-  useEffect(() => {
-    async function fetchEventDetails() {
-      try {
-        const response = await axios.get('/api/events-proxy');
-        const item = response.data?.results?.find((e: any) => e.id.toString() === id);
-        
-        if (item) {
-          setEvent(item);
-        } else {
-          setEvent('NOT_FOUND');
-        }
-      } catch (error: any) {
-        console.error('Error fetching event details from main list API:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchEventDetails();
-  }, [id]);
+async function getEvent(id: string) {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  try {
+    const res = await fetch(`${API_URL}/api/events/`, {
+      next: { revalidate: 3600 }
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.results?.find((e: any) => e.id.toString() === id) || null;
+  } catch (error) {
+    console.error('Error fetching event for metadata:', error);
+    return null;
+  }
+}
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-      </div>
-    );
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const event = await getEvent(id);
+
+  if (!event) {
+    return {
+      title: 'Event Not Found | NFIS',
+    };
   }
 
-  if (!event || event === 'NOT_FOUND') {
+  const title = `${event.title} | National Franchise Investment Summit`;
+  const description = event.description?.substring(0, 160) || `Join the ${event.title} at NFIS. Connect with leading franchise brands and investors.`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `https://nationalfranchiseinvestmentsummit.com/exhibitions/${id}`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `https://nationalfranchiseinvestmentsummit.com/exhibitions/${id}`,
+      type: 'article',
+      images: event.image ? [{ url: event.image }] : [],
+    },
+  };
+}
+
+export default async function ExhibitionDetailsPage({ params }: Props) {
+  const { id } = await params;
+  const event = await getEvent(id);
+
+  if (!event) {
     return notFound();
   }
 
-  // Format the dates securely
-  const formattedStartDate = event.start_date 
-      ? new Date(event.start_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-      : 'TBA';
-  const formattedEndDate = event.end_date 
-      ? new Date(event.end_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-      : 'TBA';
+  const formattedStartDate = event.start_date
+    ? new Date(event.start_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    : 'TBA';
+  const formattedEndDate = event.end_date
+    ? new Date(event.end_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    : 'TBA';
 
   const defaultImage = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1600&q=80';
 
@@ -62,18 +75,16 @@ export default function ExhibitionDetailsPage({ params }: { params: Promise<{ id
       <section className="relative w-full h-[50vh] min-h-[400px] flex items-end overflow-hidden pt-16">
         <div className="absolute inset-0 z-0">
           <Image
-            src={defaultImage}
+            src={event.image || defaultImage}
             alt={event.title || 'Exhibition Image'}
             fill
             className="object-cover"
             priority
           />
-          {/* Deep blur and color blend gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent mix-blend-multiply"></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pb-10">
-          {/* Breadcrumb style navigation element */}
           <div className="mb-4 flex items-center gap-2 text-red-200 text-sm font-semibold uppercase tracking-wider backdrop-blur-sm bg-black/20 inline-flex px-3 py-1 rounded-full border border-red-200/20">
             <Link href="/exhibitions" className="hover:text-white transition-colors">Events</Link>
             <ChevronRight size={14} />
@@ -105,25 +116,18 @@ export default function ExhibitionDetailsPage({ params }: { params: Promise<{ id
         </div>
       </section>
 
-      {/* Main Content Area Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Left Column (Main Details) */}
           <div className="lg:col-span-2 space-y-8">
-            
-            {/* Overview / Description Card */}
             <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                 About The Exhibition
               </h2>
-              {/* Preserving white spaces and line breaks natively from the backend */}
               <div className="prose max-w-none text-gray-600 leading-relaxed text-base md:text-lg whitespace-pre-wrap">
                 {event.description || 'Detailed description for this exhibition is currently not available.'}
               </div>
             </div>
 
-            {/* Event Agenda & Specifics */}
             {event.time_schedule && (
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 md:p-8 border border-blue-100/50">
                 <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
@@ -137,11 +141,8 @@ export default function ExhibitionDetailsPage({ params }: { params: Promise<{ id
             )}
           </div>
 
-          {/* Right Column (Stats & Registration Sticky Panel) */}
           <div className="lg:col-span-1">
             <div className="sticky top-28 space-y-6">
-              
-              {/* Stats Card */}
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
                 <h3 className="text-lg font-bold text-gray-900 border-b pb-4 mb-4">
                   Event Statistics
@@ -183,7 +184,6 @@ export default function ExhibitionDetailsPage({ params }: { params: Promise<{ id
                 </ul>
               </div>
 
-              {/* Registration / Booking Card */}
               {event.is_active ? (
                 <div className="bg-gradient-to-br from-red-600 to-red-800 rounded-2xl p-6 shadow-lg shadow-red-900/20 text-white text-center">
                   <h3 className="text-2xl font-bold mb-2">Secure Your Spot</h3>

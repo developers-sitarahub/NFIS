@@ -16,11 +16,10 @@ export function ExhibitionCard({ exhibition }: ExhibitionCardProps) {
     year: 'numeric',
   });
 
-  const baseSiteUrl = process.env.NEXT_PUBLIC_BASE_SITE_URL || 'http://localhost:3000';
-  const learnMoreUrl = `${baseSiteUrl}/exhibition`;
+  const internalUrl = `/exhibitions/${exhibition.id}`;
 
   return (
-    <a href={learnMoreUrl} target="_blank" rel="noopener noreferrer">
+    <Link href={internalUrl}>
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg hover:border-red-300 transition-all duration-300 h-full flex flex-col">
         {/* Image Section */}
         <div className={`relative w-full h-48 overflow-hidden bg-gray-100 ${!exhibition.featured ? 'grayscale-[0.5] opacity-90' : ''}`}>
@@ -96,6 +95,6 @@ export function ExhibitionCard({ exhibition }: ExhibitionCardProps) {
           </div>
         </div>
       </div>
-    </a>
+    </Link>
   );
 }
