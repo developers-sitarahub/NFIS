@@ -9,9 +9,9 @@ import * as Select from '@radix-ui/react-select';
 
 type SortOption = 'relevance' | 'investment-asc' | 'investment-desc' | 'roi-desc' | 'units-desc';
 
-export default function FranchisesPage() {
-  const [franchises, setFranchises] = useState<Franchise[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function FranchisesPage({ initialFranchises = [] }: { initialFranchises?: Franchise[] }) {
+  const [franchises, setFranchises] = useState<Franchise[]>(initialFranchises);
+  const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [investmentRange, setInvestmentRange] = useState<[number, number]>([0, 10000000]);
@@ -21,70 +21,67 @@ export default function FranchisesPage() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
   useEffect(() => {
-    const fetchFranchises = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(`${API_URL}/api/exhibitor-registrations/`);
-        if (res.ok) {
-          const data = await res.json();
-          const results = data.results || data;
+    if (initialFranchises.length === 0) {
+      const fetchFranchises = async () => {
+        setLoading(true);
+        try {
+          const res = await fetch(`${API_URL}/api/exhibitor-registrations/`);
+          if (res.ok) {
+            const data = await res.json();
+            const results = data.results || data;
 
-          const mapped: Franchise[] = (Array.isArray(results) ? results : []).map((item: any) => {
-            const investmentStr = item.investment_required || '';
-            const minMatch = investmentStr.split('-')[0]?.match(/([\d.]+)\s*(K|Lakh|Crore)/i);
-            const maxMatch = investmentStr.split('-')[1]?.match(/([\d.]+)\s*(K|Lakh|Crore)/i);
+            const mapped: Franchise[] = (Array.isArray(results) ? results : []).map((item: any) => {
+              const investmentStr = item.investment_required || '';
+              const minMatch = investmentStr.split('-')[0]?.match(/([\d.]+)\s*(K|Lakh|Crore)/i);
+              const maxMatch = investmentStr.split('-')[1]?.match(/([\d.]+)\s*(K|Lakh|Crore)/i);
 
-            const parseVal = (match: any) => {
-              if (!match) return 0;
-              let val = parseFloat(match[1]);
-              const unit = (match[2] || '').toLowerCase();
-              if (unit === 'k') val *= 1000;
-              else if (unit === 'lakh') val *= 100000;
-              else if (unit === 'crore') val *= 10000000;
-              return val;
-            };
+              const parseVal = (match: any) => {
+                if (!match) return 0;
+                let val = parseFloat(match[1]);
+                const unit = (match[2] || '').toLowerCase();
+                if (unit === 'k') val *= 1000;
+                else if (unit === 'lakh') val *= 100000;
+                else if (unit === 'crore') val *= 10000000;
+                return val;
+              };
 
-            const minInvest = parseVal(minMatch);
-            let maxInvest = parseVal(maxMatch);
+              const minInvest = parseVal(minMatch);
+              let maxInvest = parseVal(maxMatch);
 
-            // If only one value is provided (e.g. "50 Lakhs"), treat it as min and set a reasonable max or same
-            if (minInvest > 0 && maxInvest === 0) {
-              maxInvest = minInvest;
-            }
+              if (minInvest > 0 && maxInvest === 0) {
+                maxInvest = minInvest;
+              }
 
-            // Handle multiple industries (could be comma or semicolon separated)
-            const rawIndustries = item.industry || 'General';
-            const categoriesSet = rawIndustries.split(/[;,]/).map((s: string) => s.trim()).filter(Boolean);
-
-            return {
-              id: item.id.toString(),
-              name: item.company_name || 'Upcoming Franchise',
-              categories: categoriesSet.length > 0 ? categoriesSet : ['General'],
-              investmentRange: {
-                min: minInvest,
-                max: maxInvest || minInvest * 1.5
-              },
-              description: item.about || '',
-              shortDescription: item.product_category || '',
-              roi: item.roi || '18-25',
-              yearsInBusiness: Number(item.founded_year) ? new Date().getFullYear() - Number(item.founded_year) : 5,
-              unitsOperating: Number(item.units_operating) || 0,
-              supportLevel: 'Comprehensive',
-              image: item.logo || '',
-              highlights: ['Proven Model', 'Training Included', 'Brand Support'],
-              verified: item.status === 'paid',
-            };
-          });
-          setFranchises(mapped);
+              return {
+                id: item.id.toString(),
+                name: item.company_name || 'Upcoming Franchise',
+                categories: (item.industry || 'General').split(/[;,]/).map((s: string) => s.trim()).filter(Boolean),
+                investmentRange: {
+                  min: minInvest,
+                  max: maxInvest || minInvest * 1.5
+                },
+                description: item.about || '',
+                shortDescription: item.product_category || '',
+                roi: item.roi || '18-25',
+                yearsInBusiness: Number(item.founded_year) ? new Date().getFullYear() - Number(item.founded_year) : 5,
+                unitsOperating: Number(item.units_operating) || 0,
+                supportLevel: 'Comprehensive',
+                image: item.logo || '',
+                highlights: ['Proven Model', 'Training Included', 'Brand Support'],
+                verified: item.status === 'paid',
+              };
+            });
+            setFranchises(mapped);
+          }
+        } catch (err) {
+          console.error('Failed to fetch franchises:', err);
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error('Failed to fetch franchises:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchFranchises();
-  }, [API_URL]);
+      };
+      fetchFranchises();
+    }
+  }, [API_URL, initialFranchises]);
 
   const categories = useMemo(() => {
     const counts: Record<string, number> = {};

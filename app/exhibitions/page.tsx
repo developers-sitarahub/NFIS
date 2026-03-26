@@ -16,6 +16,34 @@ export const metadata: Metadata = {
   keywords: ['Franchise Expo', 'Business Summits', 'Networking Events', 'Exhibitions India'],
 };
 
-export default function Page() {
-  return <ExhibitionsPage />;
+export default async function Page() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  let initialExhibitions: any[] = [];
+
+  try {
+    const res = await fetch(`${API_URL}/api/events/`, {
+      next: { revalidate: 3600 } // Cache for 1 hour
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.results) {
+        initialExhibitions = data.results.map((item: any) => ({
+          id: item.id.toString(),
+          name: item.title,
+          location: item.location || item.venue || 'TBA',
+          date: item.start_date,
+          description: item.description || 'No description available',
+          image: item.image || '',
+          featured: item.is_active,
+          attendees: parseInt(item.buyers_count) || undefined,
+          booths: parseInt(item.exhibitors_count) || undefined,
+        }));
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching exhibitions on server:', error);
+  }
+
+  return <ExhibitionsPage initialExhibitions={initialExhibitions} />;
 }

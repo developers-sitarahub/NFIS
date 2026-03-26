@@ -10,16 +10,23 @@ import { HomepageSearchBar } from '@/components/homepage-search-bar';
 import { TrendingUp, Award, Users, Target, RefreshCw } from 'lucide-react';
 import { Franchise } from '@/lib/types';
 
-export default function Home() {
-  const [featuredFranchises, setFeaturedFranchises] = useState<Franchise[]>([]);
-  const [loadingFranchises, setLoadingFranchises] = useState(true);
-  const [apiExhibitions, setApiExhibitions] = useState<any[]>([]);
-  const [loadingExhibitions, setLoadingExhibitions] = useState(true);
+export default function Home({ 
+  initialFranchises = [], 
+  initialExhibitions = [] 
+}: { 
+  initialFranchises?: Franchise[], 
+  initialExhibitions?: any[] 
+}) {
+  const [featuredFranchises, setFeaturedFranchises] = useState<Franchise[]>(initialFranchises);
+  const [loadingFranchises, setLoadingFranchises] = useState(false);
+  const [apiExhibitions, setApiExhibitions] = useState<any[]>(initialExhibitions);
+  const [loadingExhibitions, setLoadingExhibitions] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
   useEffect(() => {
     async function fetchFranchises() {
+      if (initialFranchises.length > 0) return;
       setLoadingFranchises(true);
       try {
         const res = await fetch(`${API_URL}/api/exhibitor-registrations/`);
@@ -74,6 +81,7 @@ export default function Home() {
     }
 
     async function fetchEvents() {
+      if (initialExhibitions.length > 0) return;
       setLoadingExhibitions(true);
       try {
         const response = await axios.get('/api/events-proxy');
@@ -102,7 +110,7 @@ export default function Home() {
 
     fetchFranchises();
     fetchEvents();
-  }, [API_URL]);
+  }, [API_URL, initialFranchises, initialExhibitions]);
 
   const featuredExhibitions = apiExhibitions.length > 0
     ? apiExhibitions.filter((e) => e.featured).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).slice(0, 2)
