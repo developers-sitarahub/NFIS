@@ -120,7 +120,7 @@ export default function RootLayout({
       '@type': 'ContactPoint',
       'telephone': '+91-98205-31096',
       'contactType': 'customer service',
-      'email': 'info@nationalfranchiseinvestmentsummit.com.com'
+      'email': 'info@nationalfranchiseinvestmentsummit.com'
     }
   };
 
