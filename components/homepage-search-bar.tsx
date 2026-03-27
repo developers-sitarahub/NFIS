@@ -15,7 +15,21 @@ export function HomepageSearchBar() {
   const [showInvestmentDropdown, setShowInvestmentDropdown] = useState(false);
 
   const cities = ['All India', 'Delhi', 'Mumbai', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune'];
-  const categories = ['All Categories', 'Food & Beverage', 'Retail', 'Education', 'Healthcare', 'Services', 'Technology'];
+  const categories = [
+    'All Categories',
+    'QSR',
+    'Health & Wellness',
+    'Education & Training',
+    'Global Pavilion',
+    'Retail & Lifestyle',
+    'Hospitality & Stay',
+    'Kids & Entertainment',
+    'Ecosystem & Support',
+    'Automobile & EV',
+    'Business Services',
+    'Home Services',
+    'Finance & Banking'
+  ];
   const investments = ['Select Investment', '₹5-10 Lakhs', '₹10-25 Lakhs', '₹25-50 Lakhs', '₹50+ Lakhs'];
 
   const handleSearch = (e: React.FormEvent) => {

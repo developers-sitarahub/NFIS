@@ -42,15 +42,18 @@ const MANAGEABLE_FIELDS = [
 ];
 
 const PRODUCT_CATEGORIES_BY_INDUSTRY: Record<string, string[]> = {
-  'Food & QSR': ['Fast Food', 'Fine Dining', 'Cafe/Bakery', 'Cloud Kitchen', 'Ice Cream & Desserts', 'Beverages', 'Other Food'],
-  'Health, Fitness & Wellness': ['Gym/Health Club', 'Yoga/Pilates', 'Wellness Center', 'Sports Coaching', 'Skin Care Clinic', 'Other Fitness'],
-  'Education & Training': ['Pre-school/K-12', 'Tutoring/Coaching', 'Vocational Training', 'Language School', 'Other Education'],
-  'Retail & Lifestyle': ['Apparel & Fashion', 'Supermarket/Grocery', 'Electronics', 'Home & Lifestyle', 'Cosmetics Store', 'Other Retail'],
-  'Hospitality & Stay': ['Hotels/B&B', 'Resorts', 'Travel Agency', 'Other Hospitality'],
-  'Kids & Entertainment': ['Play Centers', 'Themed Parks', 'Gaming Zones', 'Other Entertainment'],
-  'Automobile & EV': ['EV Showrooms', 'Service Centers', 'Automobile Accessories', 'Charging Stations'],
-  'Business Services': ['Cleaning/Maintenance', 'Consulting/B2B', 'Logistics/Courier', 'Healthcare Services', 'Other Services'],
-  'Home Services & Real Estate Allied': ['Interior Design', 'Pest Control', 'Facilities Management', 'Real Estate Brokerage', 'Other Home Services']
+  'QSR': ['Fast Food', 'Cafe & Bakery', 'Cloud Kitchen', 'Ice Cream & Desserts', 'Beverages', 'Fine Dining', 'Other Food'],
+  'Health & Wellness': ['Gym & Health Club', 'Wellness Center', 'Yoga & Pilates', 'Skin Care & Beauty', 'Healthcare Services', 'Other Wellness'],
+  'Education & Training': ['Pre-school/K-12', 'Tutoring & Coaching', 'Vocational Training', 'Language School', 'Other Education'],
+  'Global Pavilion': ['International Brands', 'Foreign Investment', 'Import/Export', 'Overseas Expansion'],
+  'Retail & Lifestyle': ['Apparel & Fashion', 'Supermarket & Grocery', 'Electronics', 'Home & Lifestyle', 'Cosmetics', 'Other Retail'],
+  'Hospitality & Stay': ['Hotels & B&B', 'Resorts', 'Travel Agency', 'Homestays', 'Other Hospitality'],
+  'Kids & Entertainment': ['Play Centers', 'Themed Parks', 'Gaming Zones', 'Toy Stores', 'Other Entertainment'],
+  'Ecosystem & Support': ['Consulting', 'B2B Services', 'Logistics', 'Manpower', 'Marketing'],
+  'Automobile & EV': ['EV Showrooms', 'Service Centers', 'Accessories', 'Charging Stations', 'Tyres & Spares'],
+  'Business Services': ['B2B Consulting', 'Facility Management', 'Legal & Accounting', 'IT Services', 'Other B2B'],
+  'Home Services': ['Interior Design', 'Pest Control', 'Real Estate Brokerage', 'Home Automation', 'Other Home Services'],
+  'Finance & Banking': ['NBFCs', 'Investment Services', 'Loan Hubs', 'Financial Consulting', 'Digital Banking']
 };
 
 export default function FranchisorDashboard() {
