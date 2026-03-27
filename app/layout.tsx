@@ -16,51 +16,45 @@ const SITE_URL = 'https://nationalfranchiseinvestmentsummit.com';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+
   title: {
-    default: 'National Franchise Investment Summit | Best Franchise Opportunities India',
-    template: '%s | National Franchise Investment Summit NFIS'
+    default: 'National Franchise Investment Summit',
+    template: '%s',
   },
-  description: 'National Franchise Investment Summit (NFIS) is India\'s premier platform for franchise discovery. Explore top franchise business opportunities, connect with 600+ leading brands, and secure vetted investments with high ROI. Your journey to business ownership starts here.',
+
+  description:
+    'National Franchise Investment Summit (NFIS) is India\'s premier platform for franchise discovery. Explore top franchise opportunities, connect with 600+ leading brands, and secure high-ROI investments.',
+
   keywords: [
     'Franchise India',
     'Best Franchise Opportunities India',
-    'QSR Franchise India',
-    'Health & Wellness Franchise',
-    'Education & Training Franchise',
-    'Global Pavilion Franchise',
-    'Retail & Lifestyle Franchise',
-    'Hospitality & Stay Franchise',
-    'Kids & Entertainment Franchise',
-    'Ecosystem & Support Franchise',
-    'Automobile & EV Franchise',
-    'Business Services Franchise',
-    'Home Services Franchise',
-    'Finance & Banking Franchise',
-    'Low Investment Franchise India',
-    'High Profit Franchise Business',
     'Franchise Investment Summit',
     'Business Opportunities India',
     'Franchise Expo',
     'NFIS India',
-    'Capital Network',
-    'Master Franchise Opportunities India',
     'Top Franchise Brands',
-    'Small Business Opportunities India'
+    'Low Investment Franchise India',
+    'High Profit Franchise Business'
   ],
+
   authors: [{ name: 'NFIS Team' }],
   creator: 'National Franchise Investment Summit',
   publisher: 'National Franchise Investment Summit',
+
   alternates: {
     canonical: SITE_URL,
   },
+
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
+
   openGraph: {
-    title: 'National Franchise Investment Summit | Connect with 600+ Vetted Brands',
-    description: 'India\'s largest franchise discovery platform. Explore high-ROI business opportunities and connect with top franchisors at NFIS.',
+    title: 'National Franchise Investment Summit',
+    description:
+      'India\'s premier franchise platform connecting brands, investors, and entrepreneurs.',
     url: SITE_URL,
     siteName: 'National Franchise Investment Summit',
     locale: 'en_IN',
@@ -70,17 +64,20 @@ export const metadata: Metadata = {
         url: '/logo.png',
         width: 800,
         height: 800,
-        alt: 'NFIS - National Franchise Investment Summit Logo',
-      }
+        alt: 'NFIS Logo',
+      },
     ],
   },
+
   twitter: {
     card: 'summary_large_image',
-    title: 'National Franchise Investment Summit | Top Franchise Hub India',
-    description: 'Connect with India\'s best franchise brands and scale your business portfolio with NFIS.',
+    title: 'National Franchise Investment Summit',
+    description:
+      'Discover top franchise opportunities and connect with leading brands in India.',
     creator: '@NFIS_India',
     images: ['/logo.png'],
   },
+
   robots: {
     index: true,
     follow: true,
@@ -92,6 +89,7 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+
   icons: {
     icon: [
       {
@@ -118,6 +116,7 @@ export const metadata: Metadata = {
       },
     ],
   },
+
   category: 'Business & Investment',
 }
 
